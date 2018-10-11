@@ -9,6 +9,11 @@ describe('SquareBoard', () => {
     board = new SquareBoard(sideSize)
   })
 
+  it('should copy the positions with getAllPositions()', () => {
+    expect(board.positions).not.toBe(board.getAllPositions())
+    expect(board.positions).toEqual(board.getAllPositions())
+  })
+
   it('should return correct positions', () => {
     forAllCoords((x, y) => {
       const position = board.getPosition(x, y)

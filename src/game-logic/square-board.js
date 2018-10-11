@@ -70,6 +70,10 @@ class SquareBoard {
   getPosition (x, y) {
     return this.positions[y * this.sideSize + x]
   }
+
+  getAllPositions () {
+    return Array.from(this.positions)
+  }
 }
 
 export default SquareBoard

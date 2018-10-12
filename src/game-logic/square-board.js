@@ -46,16 +46,12 @@ class Position {
   }
 
   get neighbours () {
-    const offsets = [-1, 0, 1]
-    const makeOffsetCouple = idx => [offsets[idx % offsets.length], offsets[Math.floor(idx / offsets.length)]]
+    const offsets = [[-1, 0], [1, 0], [0, -1], [0, 1]]
     const makeCoords = ([offsetX, offsetY]) => [this.x + offsetX, this.y + offsetY]
-    const isNotSelf = ([x, y]) => this.x !== x || this.y !== y
     const isInbound = ([x, y]) => x >= 0 && y >= 0 && x < this.board.sideSize && y < this.board.sideSize
-    return range(9)
-      .map(makeOffsetCouple)
+    return offsets
       .map(makeCoords)
       .filter(isInbound)
-      .filter(isNotSelf)
       .map(coords => this.board.getPosition(...coords))
   }
 }

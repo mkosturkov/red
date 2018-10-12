@@ -68,11 +68,11 @@ describe('SquareBoard', () => {
 
   it('should have positions aware of their neighbours', () => {
     const inner = board.getPosition(4, 4).neighbours.map(({ x, y }) => [x, y])
-    const expectedInner = [[3, 3], [4, 3], [5, 3], [3, 4], [5, 4], [3, 5], [4, 5], [5, 5]]
+    const expectedInner = [[3, 4], [5, 4], [4, 3], [4, 5]]
     expect(inner).toEqual(expectedInner)
 
     const outer = board.getPosition(0, 0).neighbours.map(({ x, y }) => [x, y])
-    const expectedOuter = [[1, 0], [0, 1], [1, 1]]
+    const expectedOuter = [[1, 0], [0, 1]]
     expect(outer).toEqual(expectedOuter)
   })
 

@@ -25,6 +25,35 @@ class RedGame {
     }
   }
 
+  canMoveTile (from, to) {
+    const visited = []
+    const reached = position => position === to
+    const wasNotVisited = position => visited.indexOf(position) < 0
+    const isNotBlocked = position => position.value === undefined
+    const hasPath = position => {
+      if (reached(position)) {
+        return true
+      }
+
+      visited.push(position)
+      const nonBlocked = position.neighbours.filter(isNotBlocked)
+      for (let i = 0; i < nonBlocked.length; i++) {
+        if (wasNotVisited(nonBlocked[i]) && hasPath(nonBlocked[i])) {
+          return true
+        }
+      }
+      return false
+    }
+    return hasPath(from)
+  }
+
+  moveTile (from, to) {
+    if (this.canMoveTile(from, to)) {
+      to.value = from.value
+      delete from.value
+    }
+  }
+
   clearLines (lines) {
     lines.forEach(line => line.forEach(position => delete position.value))
   }

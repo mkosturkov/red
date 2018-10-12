@@ -2,6 +2,22 @@ import RedGame from '@/game-logic/red-game'
 import { range } from '@/lib'
 
 describe('RedGame', () => {
+  const leftRightDiagonal = idx => [idx, idx]
+
+  const rightLeftDiagonal = idx => [idx, game.board.sideSize - idx - 1]
+
+  const horizontal = idx => [idx, 4]
+
+  const vertical = idx => [4, idx]
+
+  const drawLine = (type, start, length) => {
+    return range(length, start).map(idx => {
+      const position = game.board.getPosition(...type(idx))
+      position.value = RedGame.Tiles.PLAYER_DROPPED
+      return position
+    })
+  }
+
   let game
   beforeEach(() => {
     game = new RedGame()
@@ -83,22 +99,6 @@ describe('RedGame', () => {
 
     const centerPosition = () => game.board.getPosition(center(), center())
 
-    const leftRightDiagonal = idx => [idx, idx]
-
-    const rightLeftDiagonal = idx => [idx, game.board.sideSize - idx - 1]
-
-    const horizontal = idx => [idx, 4]
-
-    const vertical = idx => [4, idx]
-
-    const drawLine = (type, start, length) => {
-      return range(length, start).map(idx => {
-        const position = game.board.getPosition(...type(idx))
-        position.value = RedGame.Tiles.PLAYER_DROPPED
-        return position
-      })
-    }
-
     const drawStar = length => {
       const start = center() - Math.floor(length / 2)
       return [
@@ -147,6 +147,48 @@ describe('RedGame', () => {
 
     it('should add to previos score', () => {
       expect(game.calculateScore([[RedGame.Tiles.PLAYER_DROPPED]], 1)).toBe(3)
+    })
+  })
+
+  describe('Tiles moving', () => {
+    let from, to
+    beforeEach(() => {
+      from = game.board.getPosition(0, 0)
+      to = game.board.getPosition(8, 8)
+    })
+
+    it('should report allowed move when not blocked', () => {
+      expect(game.canMoveTile(from, to)).toBe(true)
+    })
+
+    it('should report forbidden move when blocked horizontally', () => {
+      drawLine(horizontal, 0, game.board.sideSize)
+      expect(game.canMoveTile(from, to)).toBe(false)
+    })
+
+    it('should report forbidden move when blocked vertically', () => {
+      drawLine(vertical, 0, game.board.sideSize)
+      expect(game.canMoveTile(from, to)).toBe(false)
+    })
+
+    it('should report forbidden move when blocked diagonally', () => {
+      drawLine(rightLeftDiagonal, 0, game.board.sideSize)
+      expect(game.canMoveTile(from, to)).toBe(false)
+    })
+
+    it('should move when allowed', () => {
+      from.value = RedGame.Tiles.NORMAL_1
+      game.moveTile(from, to)
+      expect(from.value).toBe(undefined)
+      expect(to.value).toBe(RedGame.Tiles.NORMAL_1)
+    })
+
+    it('should not move when not allowed', () => {
+      from.value = RedGame.Tiles.NORMAL_1
+      drawLine(horizontal, 0, game.board.sideSize)
+      game.moveTile(from, to)
+      expect(from.value).toBe(RedGame.Tiles.NORMAL_1)
+      expect(to.value).toBe(undefined)
     })
   })
 })

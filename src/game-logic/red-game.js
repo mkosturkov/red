@@ -18,8 +18,9 @@ class RedGame {
   dropPlayerTile (position) {
     if (this.canDropTileOn(position)) {
       position.value = RedGame.Tiles.PLAYER_DROPPED
-      this.scoreAndClear(position)
-      this.dropTiles()
+      if (!this.scoreAndClear(position)) {
+        this.dropTiles()
+      }
     }
   }
 
@@ -49,8 +50,9 @@ class RedGame {
     if (this.canMoveTile(from, to)) {
       to.value = from.value
       delete from.value
-      this.scoreAndClear(to)
-      this.dropTiles()
+      if(!this.scoreAndClear(to)) {
+        this.dropTiles()
+      }
     }
   }
 
@@ -97,6 +99,7 @@ class RedGame {
     const linesToClear = this.getLinesForPosition(position)
     this.score = this.calculateScore(linesToClear, this.score)
     linesToClear.forEach(line => line.forEach(position => delete position.value))
+    return linesToClear.length > 0
   }
 
   getTilesToDrop () {

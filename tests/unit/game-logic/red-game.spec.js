@@ -211,7 +211,7 @@ describe('RedGame', () => {
     it('should clear lines after player drop and update score', () => {
       drawLine(horizontal, 0, game.minLineLength - 1)
       game.dropPlayerTile(game.board.getPosition(4, 4))
-      expect(getFilledPositions()).toHaveLength(game.tilesToDropCount)
+      expect(getFilledPositions()).toHaveLength(0)
       expect(game.score).toBe(10)
     })
 
@@ -224,7 +224,7 @@ describe('RedGame', () => {
     it('should clear lines after tile move and update score', () => {
       drawLine(horizontal, 0, game.minLineLength - 1, RedGame.Tiles.NORMAL_1)
       game.moveTile(...getFromTo())
-      expect(getFilledPositions()).toHaveLength(game.tilesToDropCount)
+      expect(getFilledPositions()).toHaveLength(0)
       expect(game.score).toBe(5)
     })
 

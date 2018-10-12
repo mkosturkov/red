@@ -7,104 +7,130 @@ describe('RedGame', () => {
     game = new RedGame()
   })
 
-  it('should have initial score of zero', () => {
-    expect(game.score).toBe(0)
-  })
-
-  function shouldHavePreparedTilesToDrop () {
-    expect(game.nextTilesToDrop).toHaveLength(game.tilesToDropCount)
-    game.nextTilesToDrop.forEach(tile => {
-      expect(RedGame.getDropableTiles()).toContain(tile)
-    })
-  }
-  it('should have prepared tiles to drop', shouldHavePreparedTilesToDrop)
-
-  it('should report correctly if position is available for drop', () => {
-    const position = game.board.getPosition(5, 5)
-    expect(game.canDropTileOn(position)).toBe(true)
-
-    position.value = RedGame.Tiles.NORMAL_1
-    expect(game.canDropTileOn(position)).toBe(false)
-  })
-
-  it('should drop player tile only if position is available', () => {
-    const position = game.board.getPosition(5, 5)
-    const takenPosition = game.board.getPosition(6, 6)
-    takenPosition.value = RedGame.Tiles.NORMAL_1
-    game.dropPlayerTile(position)
-    game.dropPlayerTile(takenPosition)
-
-    expect(position.value).toBe(RedGame.Tiles.PLAYER_DROPPED)
-    expect(takenPosition.value).toBe(RedGame.Tiles.NORMAL_1)
-  })
-
-  it('should clear lines after player drop', () => {
-    makeLineWithPlayerDrop()
-    range(game.minLineLength).forEach(idx => {
-      expect(game.board.getPosition(0, idx).value).toBe(undefined)
-    })
-  })
-
-  it('should update the score after player drop', () => {
-    makeLineWithPlayerDrop()
-    expect(game.score).toBe(10)
-  })
-
-  it('should drop prepared tiles and prepare new ones', () => {
-    const preparedTiles = game.nextTilesToDrop
-
-    game.dropTiles()
-    const droppedTiles = game.board.getAllPositions()
-      .filter(position => position.value !== undefined)
-      .map(position => position.value)
-
-    const countTiles = (tiles) => {
-      return tiles.reduce((acc, tile) => {
-        if (acc[tile] === undefined) {
-          acc[tile] = 1
-        } else {
-          acc[tile]++
-        }
-        return acc
-      }, {})
+  describe('Tiles dropping', () => {
+    function shouldHavePreparedTilesToDrop () {
+      expect(game.nextTilesToDrop).toHaveLength(game.tilesToDropCount)
+      game.nextTilesToDrop.forEach(tile => {
+        expect(RedGame.getDropableTiles()).toContain(tile)
+      })
     }
-    expect(countTiles(droppedTiles)).toEqual(countTiles(preparedTiles))
-    shouldHavePreparedTilesToDrop()
-  })
+    it('should have prepared tiles to drop', shouldHavePreparedTilesToDrop)
 
-  it('should drop tiles only on free spots', () => {
-    const testTileToDrop = Symbol('test-tile-to-drop')
-    const tileToFill = Symbol('test-tile-to-fill')
-    const tilesToDrop = [testTileToDrop, testTileToDrop, testTileToDrop]
+    it('should report correctly if position is available for drop', () => {
+      const position = game.board.getPosition(5, 5)
+      expect(game.canDropTileOn(position)).toBe(true)
 
-    game.nextTilesToDrop = tilesToDrop
-    const allPositions = game.board.getAllPositions()
-    allPositions.slice(tilesToDrop.length).forEach(position => {
-      position.value = tileToFill
+      position.value = RedGame.Tiles.NORMAL_1
+      expect(game.canDropTileOn(position)).toBe(false)
     })
-    game.dropTiles()
-    const dropped = allPositions
-      .slice(0, tilesToDrop.length)
-      .map(position => position.value)
 
-    expect(dropped).toEqual(tilesToDrop)
-  })
+    it('should drop player tile only if position is available', () => {
+      const position = game.board.getPosition(5, 5)
+      const takenPosition = game.board.getPosition(6, 6)
+      takenPosition.value = RedGame.Tiles.NORMAL_1
+      game.dropPlayerTile(position)
+      game.dropPlayerTile(takenPosition)
 
-  it('should drop tiles after player drop', () => {
-    const preparedTilesCount = game.nextTilesToDrop.length
-    game.dropPlayerTile(game.board.getPosition(6, 6))
-    const filledPositionsCounts = game.board.getAllPositions()
-      .filter(position => position.value !== undefined)
-      .length
-    expect(filledPositionsCounts).toBe(preparedTilesCount + 1)
-  })
-
-  function makeLineWithPlayerDrop () {
-    const positions = range(game.minLineLength - 1).map(idx => game.board.getPosition(0, idx))
-    positions.forEach(position => {
-      position.value = RedGame.Tiles.PLAYER_DROPPED
+      expect(position.value).toBe(RedGame.Tiles.PLAYER_DROPPED)
+      expect(takenPosition.value).toBe(RedGame.Tiles.NORMAL_1)
     })
-    positions.push(game.board.getPosition(0, game.minLineLength - 1))
-    game.dropPlayerTile(positions[game.minLineLength - 1])
-  }
+
+    it('should drop prepared tiles and prepare new ones', () => {
+      const preparedTiles = game.nextTilesToDrop
+
+      game.dropTiles()
+      const droppedTiles = game.board.getAllPositions()
+        .filter(position => position.value !== undefined)
+        .map(position => position.value)
+
+      const countTiles = (tiles) => {
+        return tiles.reduce((acc, tile) => {
+          if (acc[tile] === undefined) {
+            acc[tile] = 1
+          } else {
+            acc[tile]++
+          }
+          return acc
+        }, {})
+      }
+      expect(countTiles(droppedTiles)).toEqual(countTiles(preparedTiles))
+      shouldHavePreparedTilesToDrop()
+    })
+
+    it('should drop tiles only on free spots', () => {
+      const testTileToDrop = Symbol('test-tile-to-drop')
+      const tileToFill = Symbol('test-tile-to-fill')
+      const tilesToDrop = [testTileToDrop, testTileToDrop, testTileToDrop]
+
+      game.nextTilesToDrop = tilesToDrop
+      const allPositions = game.board.getAllPositions()
+      allPositions.slice(tilesToDrop.length).forEach(position => {
+        position.value = tileToFill
+      })
+      game.dropTiles()
+      const dropped = allPositions
+        .slice(0, tilesToDrop.length)
+        .map(position => position.value)
+
+      expect(dropped).toEqual(tilesToDrop)
+    })
+  })
+
+  describe('Finding lines', () => {
+    const positionId = position => [position.x, position.y].join('-')
+
+    const center = () => Math.floor(game.board.sideSize / 2)
+
+    const centerPosition = () => game.board.getPosition(center(), center())
+
+    const leftRightDiagonal = idx => [idx, idx]
+
+    const rightLeftDiagonal = idx => [idx, game.board.sideSize - idx - 1]
+
+    const horizontal = idx => [idx, 4]
+
+    const vertical = idx => [4, idx]
+
+    const drawLine = (type, start, length) => {
+      return range(length, start).map(idx => {
+        const position = game.board.getPosition(...type(idx))
+        position.value = RedGame.Tiles.PLAYER_DROPPED
+        return position
+      })
+    }
+
+    const drawStar = length => {
+      const start = center() - Math.floor(length / 2)
+      return [
+        drawLine(leftRightDiagonal, start, length),
+        drawLine(rightLeftDiagonal, start, length),
+        drawLine(horizontal, start, length),
+        drawLine(vertical, start, length)
+      ]
+    }
+
+    it('should find all the lines a tile is in', () => {
+      const expectedLines = drawStar(game.minLineLength).map(line => line.map(p => positionId(p)))
+      const actualLines = game.getLinesForPosition(centerPosition()).map(line => line.map(p => positionId(p)))
+      expect(actualLines).toEqual(expectedLines)
+    })
+
+    it('should not find lines shorter than the minimum', () => {
+      drawStar(game.minLineLength - 1)
+      const lines = game.getLinesForPosition(centerPosition())
+      expect(lines).toHaveLength(0)
+    })
+
+    it('should consider spaces between incomplete lines', () => {
+      drawLine(horizontal, 0, 3)
+      drawLine(horizontal, 5, 3)
+      const position = game.board.getPosition(7, 4)
+      const lines = game.getLinesForPosition(position)
+      expect(lines).toHaveLength(0)
+    })
+  })
+
+  describe('Keeping score', () => {
+
+  })
 })

@@ -7,7 +7,7 @@ class Position {
     this.board = board
   }
 
-  get tldrDiagonal () {
+  get tbDiagonal () {
     const diag = []
     let { x, y } = this
     while (--x >= 0 && --y >= 0) {
@@ -22,7 +22,7 @@ class Position {
     return diag
   }
 
-  get bltrDiagonal () {
+  get btDiagonal () {
     const diag = []
     let { x, y } = this
     while (--x >= 0 && ++y < this.board.sideSize) {

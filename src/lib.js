@@ -1,5 +1,6 @@
-function range (length) {
-  return [...(new Array(length)).keys()]
+function range (length, start) {
+  start = start || 0
+  return [...(new Array(length + start)).keys()].slice(start)
 }
 
 function random (min, max) {

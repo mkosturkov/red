@@ -31,7 +31,7 @@ describe('SquareBoard', () => {
   })
 
   it('should have positions aware of their top-left-down-right diagonal', () => {
-    const diag = board.getPosition(3, 3).tldrDiagonal
+    const diag = board.getPosition(3, 3).tbDiagonal
     expect(diag.length).toBe(sideSize)
     diag.forEach((position, idx) => {
       expect(position.x).toBe(idx)
@@ -40,7 +40,7 @@ describe('SquareBoard', () => {
   })
 
   it('should have positions aware of their bottom-left-top-right diagonal', () => {
-    const diag = board.getPosition(7, 1).bltrDiagonal
+    const diag = board.getPosition(7, 1).btDiagonal
     expect(diag.length).toBe(sideSize)
     diag.forEach((position, idx) => {
       expect(position.x).toBe(idx)

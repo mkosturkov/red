@@ -18,7 +18,7 @@ class RedGame {
   dropPlayerTile (position) {
     if (this.canDropTileOn(position)) {
       position.value = RedGame.Tiles.PLAYER_DROPPED
-      const linesToClear = this.getLinesToClear()
+      const linesToClear = this.getLinesForPosition(position)
       this.updateScore(linesToClear)
       this.clearLines(linesToClear)
       this.dropTiles()
@@ -39,8 +39,27 @@ class RedGame {
     this.nextTilesToDrop = this.getTilesToDrop()
   }
 
-  getLinesToClear () {
-    return [range(5).map(idx => this.board.getPosition(0, idx))]
+  getLinesForPosition (position) {
+    const findTileLine = boardLine => {
+      return boardLine.reduce(
+        (acc, current) => {
+          if (current.value === position.value) {
+            return acc.concat([current])
+          }
+          if (acc.length < this.minLineLength) {
+            return []
+          }
+          return acc
+        },
+        []
+      )
+    }
+    return [
+      findTileLine(position.tbDiagonal),
+      findTileLine(position.btDiagonal),
+      findTileLine(position.horizontal),
+      findTileLine(position.vertical)
+    ].filter(line => line.length >= this.minLineLength)
   }
 
   updateScore (linesToScore) {

@@ -130,7 +130,23 @@ describe('RedGame', () => {
     })
   })
 
-  describe('Keeping score', () => {
+  describe('Calculating score', () => {
+    it('should know points for values', () => {
+      RedGame.getDropableTiles().forEach(tile => {
+        expect(game.calculateScore([[tile]], 0)).toBe(1)
+      })
+      expect(game.calculateScore([[RedGame.Tiles.PLAYER_DROPPED]], 0)).toBe(2)
+    })
 
+    it('should sum score in lines', () => {
+      const lines = Object.values(RedGame.getDropableTiles())
+        .map(tile => range(3).fill(tile))
+        .concat([range(3).fill(RedGame.Tiles.PLAYER_DROPPED)])
+      expect(game.calculateScore(lines, 0)).toBe(15)
+    })
+
+    it('should add to previos score', () => {
+      expect(game.calculateScore([[RedGame.Tiles.PLAYER_DROPPED]], 1)).toBe(3)
+    })
   })
 })

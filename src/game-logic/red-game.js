@@ -62,6 +62,11 @@ class RedGame {
     ].filter(line => line.length >= this.minLineLength)
   }
 
+  calculateScore (linesToScore, previousScore) {
+    const tileScore = tile => tile === RedGame.Tiles.PLAYER_DROPPED ? 2 : 1
+    return linesToScore.reduce((acc, line) => tileScore(line[0]) * line.length + acc, previousScore)
+  }
+
   updateScore (linesToScore) {
     this.score += linesToScore.reduce((acc, line) => acc + line.length * 2, 0)
   }

@@ -54,10 +54,6 @@ class RedGame {
     }
   }
 
-  clearLines (lines) {
-    lines.forEach(line => line.forEach(position => delete position.value))
-  }
-
   dropTiles () {
     const emptyPositions = this.board.getAllPositions().filter(this.canDropTileOn)
     this.nextTilesToDrop.forEach(tile => {
@@ -100,7 +96,7 @@ class RedGame {
   scoreAndClear (position) {
     const linesToClear = this.getLinesForPosition(position)
     this.score = this.calculateScore(linesToClear, this.score)
-    this.clearLines(linesToClear)
+    linesToClear.forEach(line => line.forEach(position => delete position.value))
   }
 
   getTilesToDrop () {

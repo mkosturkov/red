@@ -10,10 +10,11 @@ describe('RedGame', () => {
 
   const vertical = idx => [4, idx]
 
-  const drawLine = (type, start, length) => {
+  const drawLine = (type, start, length, tile) => {
+    tile = tile || RedGame.Tiles.PLAYER_DROPPED
     return range(length, start).map(idx => {
       const position = game.board.getPosition(...type(idx))
-      position.value = RedGame.Tiles.PLAYER_DROPPED
+      position.value = tile
       return position
     })
   }
@@ -133,20 +134,20 @@ describe('RedGame', () => {
   describe('Calculating score', () => {
     it('should know points for values', () => {
       RedGame.getDropableTiles().forEach(tile => {
-        expect(game.calculateScore([[tile]], 0)).toBe(1)
+        expect(game.calculateScore([[{ value: tile }]], 0)).toBe(1)
       })
-      expect(game.calculateScore([[RedGame.Tiles.PLAYER_DROPPED]], 0)).toBe(2)
+      expect(game.calculateScore([[{ value: RedGame.Tiles.PLAYER_DROPPED }]], 0)).toBe(2)
     })
 
     it('should sum score in lines', () => {
       const lines = Object.values(RedGame.getDropableTiles())
-        .map(tile => range(3).fill(tile))
-        .concat([range(3).fill(RedGame.Tiles.PLAYER_DROPPED)])
+        .map(tile => range(3).fill({ value: tile }))
+        .concat([range(3).fill({ value: RedGame.Tiles.PLAYER_DROPPED })])
       expect(game.calculateScore(lines, 0)).toBe(15)
     })
 
     it('should add to previos score', () => {
-      expect(game.calculateScore([[RedGame.Tiles.PLAYER_DROPPED]], 1)).toBe(3)
+      expect(game.calculateScore([[{ value: RedGame.Tiles.PLAYER_DROPPED }]], 1)).toBe(3)
     })
   })
 
@@ -189,6 +190,48 @@ describe('RedGame', () => {
       game.moveTile(from, to)
       expect(from.value).toBe(RedGame.Tiles.NORMAL_1)
       expect(to.value).toBe(undefined)
+    })
+  })
+
+  describe('Game play', () => {
+    const getFilledPositions = () => game.board.getAllPositions().filter(p => p.value !== undefined)
+    const getFromTo = () => {
+      const from = game.board.getPosition(0, 0)
+      const to = game.board.getPosition(4, 4)
+      from.value = RedGame.Tiles.NORMAL_1
+      return [from, to]
+    }
+
+    it('should drop tiles after player drop and not add score', () => {
+      game.dropPlayerTile(game.board.getPosition(1, 1))
+      expect(getFilledPositions()).toHaveLength(game.tilesToDropCount + 1)
+      expect(game.score).toBe(0)
+    })
+
+    it('should clear lines after player drop and update score', () => {
+      drawLine(horizontal, 0, game.minLineLength - 1)
+      game.dropPlayerTile(game.board.getPosition(4, 4))
+      expect(getFilledPositions()).toHaveLength(game.tilesToDropCount)
+      expect(game.score).toBe(10)
+    })
+
+    it('should drop tiles after tile move and not add score', () => {
+      game.moveTile(...getFromTo())
+      expect(getFilledPositions()).toHaveLength(game.tilesToDropCount + 1)
+      expect(game.score).toBe(0)
+    })
+
+    it('should clear lines after tile move and update score', () => {
+      drawLine(horizontal, 0, game.minLineLength - 1, RedGame.Tiles.NORMAL_1)
+      game.moveTile(...getFromTo())
+      expect(getFilledPositions()).toHaveLength(game.tilesToDropCount)
+      expect(game.score).toBe(5)
+    })
+
+    it('should score and clear for each of the dropped tiles', () => {
+      game.scoreAndClear = jest.fn(game.scoreAndClear)
+      game.dropTiles()
+      expect(game.scoreAndClear).toHaveBeenCalledTimes(game.tilesToDropCount)
     })
   })
 })

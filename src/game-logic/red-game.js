@@ -18,9 +18,7 @@ class RedGame {
   dropPlayerTile (position) {
     if (this.canDropTileOn(position)) {
       position.value = RedGame.Tiles.PLAYER_DROPPED
-      const linesToClear = this.getLinesForPosition(position)
-      this.updateScore(linesToClear)
-      this.clearLines(linesToClear)
+      this.scoreAndClear(position)
       this.dropTiles()
     }
   }
@@ -51,6 +49,8 @@ class RedGame {
     if (this.canMoveTile(from, to)) {
       to.value = from.value
       delete from.value
+      this.scoreAndClear(to)
+      this.dropTiles()
     }
   }
 
@@ -64,6 +64,7 @@ class RedGame {
       const idx = random(0, emptyPositions.length - 1)
       const position = emptyPositions.splice(idx, 1)[0]
       position.value = tile
+      this.scoreAndClear(position)
     })
     this.nextTilesToDrop = this.getTilesToDrop()
   }
@@ -93,11 +94,13 @@ class RedGame {
 
   calculateScore (linesToScore, previousScore) {
     const tileScore = tile => tile === RedGame.Tiles.PLAYER_DROPPED ? 2 : 1
-    return linesToScore.reduce((acc, line) => tileScore(line[0]) * line.length + acc, previousScore)
+    return linesToScore.reduce((acc, line) => tileScore(line[0].value) * line.length + acc, previousScore)
   }
 
-  updateScore (linesToScore) {
-    this.score += linesToScore.reduce((acc, line) => acc + line.length * 2, 0)
+  scoreAndClear (position) {
+    const linesToClear = this.getLinesForPosition(position)
+    this.score = this.calculateScore(linesToClear, this.score)
+    this.clearLines(linesToClear)
   }
 
   getTilesToDrop () {

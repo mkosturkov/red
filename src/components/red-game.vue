@@ -3,7 +3,14 @@
     <div class="controls-holder">
       <button class="new-game-btn" @click="newGame">New Game</button>
       <div class="srore-display">Score: {{ score }}</div>
-      <div class="next-tiles-holder"></div>
+      <div class="next-tiles-holder">
+        Next tiles:
+        <span
+          v-for="(tile, idx) in nextTiles"
+          :key="[idx, getTileStyle(tile)].join('-')"
+          :class="['next-tile', getTileStyle(tile)]"
+        ></span>
+      </div>
       <button class="drop-tiles-btn" @click="dropTiles">Drop 'em</button>
     </div>
     <div class="board-holder">
@@ -36,6 +43,7 @@
         target = target || this
         target.score = game.score
         target.positions = game.board.getAllPositions()
+        target.nextTiles = game.nextTilesToDrop
         target.selected = false
         return target
       },
@@ -114,12 +122,29 @@
     flex-wrap: wrap;
   }
 
+  .next-tiles-holder {
+    width: 50%;
+
+    .next-tile {
+      display: inline-block;
+      width: calc(100% / 5);
+      height: 20px;
+      margin-right: 10px
+    }
+  }
+
   .position {
     width: calc(100% / 9);
     height: calc(100% / 9);
     border-right: 1px solid black;
     border-bottom: 1px solid black;
 
+    &.selected {
+      opacity: 0.5;
+    }
+  }
+
+  .position, .next-tile {
     &.red {
       background: red;
     }
@@ -134,10 +159,6 @@
 
     &.yellow {
       background: yellow;
-    }
-
-    &.selected {
-      opacity: 0.5;
     }
   }
 </style>

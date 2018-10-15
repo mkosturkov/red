@@ -5,15 +5,14 @@
 </template>
 
 <script>
-  import RedGame from '@/components/red-game.vue'
+import RedGame from '@/components/red-game.vue'
 
-
-  export default {
-    name: 'app',
-    components: {
-      RedGame
-    }
+export default {
+  name: 'app',
+  components: {
+    RedGame
   }
+}
 </script>
 
 <style lang="scss">

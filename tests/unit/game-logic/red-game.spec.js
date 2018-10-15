@@ -172,6 +172,11 @@ describe('RedGame', () => {
       expect(game.canMoveTile(from, to)).toBe(false)
     })
 
+    it('should report forbidden move when moving to same spot', () => {
+      const position = game.board.getPosition(0, 0)
+      expect(game.canMoveTile(position, position)).toBe(false)
+    })
+
     it('should report forbidden move when blocked diagonally', () => {
       drawLine(rightLeftDiagonal, 0, game.board.sideSize)
       expect(game.canMoveTile(from, to)).toBe(false)

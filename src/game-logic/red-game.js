@@ -43,14 +43,14 @@ class RedGame {
       }
       return false
     }
-    return hasPath(from)
+    return !reached(from, to) && hasPath(from)
   }
 
   moveTile (from, to) {
     if (this.canMoveTile(from, to)) {
       to.value = from.value
       delete from.value
-      if(!this.scoreAndClear(to)) {
+      if (!this.scoreAndClear(to)) {
         this.dropTiles()
       }
     }

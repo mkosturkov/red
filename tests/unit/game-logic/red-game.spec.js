@@ -155,7 +155,7 @@ describe('RedGame', () => {
       const lines = Object.values(RedGame.getDropableTiles())
         .map(tile => makeLine(tile))
         .concat([makeLine(RedGame.Tiles.PLAYER_DROPPED)])
-      expect(game.calculateScore(lines, 0)).toBe(50)
+      expect(game.calculateScore(lines, 0)).toBe(80)
     })
 
     it('should add to previous score', () => {

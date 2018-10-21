@@ -60,6 +60,18 @@ export default {
           style = 'yellow'
           break
 
+        case RedGame.Tiles.NORMAL_4:
+          style = 'purple'
+          break
+
+        case RedGame.Tiles.NORMAL_5:
+          style = 'navy'
+          break
+
+        case RedGame.Tiles.NORMAL_6:
+          style = 'orange'
+          break
+
         case RedGame.Tiles.PLAYER_DROPPED:
           style = 'red'
           break
@@ -150,6 +162,18 @@ export default {
 
     &.yellow {
       background: yellow;
+    }
+
+    &.purple {
+      background: purple;
+    }
+
+    &.navy {
+      background: navy;
+    }
+
+    &.orange {
+      background: orange;
     }
   }
 </style>

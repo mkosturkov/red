@@ -153,7 +153,10 @@ RedGame.Tiles = {
   PLAYER_DROPPED: Symbol('player-dropped-tile'),
   NORMAL_1: Symbol('normal-tile-1'),
   NORMAL_2: Symbol('normal-tile-2'),
-  NORMAL_3: Symbol('normal-tile-3')
+  NORMAL_3: Symbol('normal-tile-3'),
+  NORMAL_4: Symbol('normal-tile-4'),
+  NORMAL_5: Symbol('normal-tile-5'),
+  NORMAL_6: Symbol('normal-tile-6')
 }
 
 RedGame.getDropableTiles = () => {

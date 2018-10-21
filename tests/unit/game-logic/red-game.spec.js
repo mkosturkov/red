@@ -152,7 +152,7 @@ describe('RedGame', () => {
       expect(game.calculateScore(lines, 0)).toBe(15)
     })
 
-    it('should add to previos score', () => {
+    it('should add to previous score', () => {
       expect(game.calculateScore([[{ value: RedGame.Tiles.PLAYER_DROPPED }]], 1)).toBe(3)
     })
   })

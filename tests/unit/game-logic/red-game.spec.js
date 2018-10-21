@@ -296,48 +296,48 @@ describe('RedGame', () => {
         expect(step.y).not.toBe(undefined)
       })
     })
-  })
 
-  it('should fire lines clear event with the lines', () => {
-    let clearedLines
-    game.events.onLinesCleared = jest.fn(lines => {
-      clearedLines = lines
+    it('should fire lines clear event with the lines', () => {
+      let clearedLines
+      game.events.onLinesCleared = jest.fn(lines => {
+        clearedLines = lines
+      })
+
+      drawLine(horizontal, 0, game.minLineLength - 1, RedGame.Tiles.PLAYER_DROPPED)
+      game.dropPlayerTile(game.board.getPosition(4, 4))
+
+      expect(clearedLines).toHaveLength(1)
+      expect(clearedLines[0]).toHaveLength(game.minLineLength)
+      clearedLines[0].forEach((p, idx) => {
+        expect(p.x).toBe(idx)
+        expect(p.y).toBe(4)
+      })
     })
 
-    drawLine(horizontal, 0, game.minLineLength - 1, RedGame.Tiles.PLAYER_DROPPED)
-    game.dropPlayerTile(game.board.getPosition(4, 4))
+    it('should fire tile drop events', () => {
+      const positions = []
+      game.events.onTileDropped = position => {
+        positions.push(position)
+      }
+      const dropPosition = game.board.getPosition(0, 0)
+      game.dropPlayerTile(dropPosition)
 
-    expect(clearedLines).toHaveLength(1)
-    expect(clearedLines[0]).toHaveLength(game.minLineLength)
-    clearedLines[0].forEach((p, idx) => {
-      expect(p.x).toBe(idx)
-      expect(p.y).toBe(4)
+      expect(positions).toHaveLength(game.tilesToDropCount + 1)
+      expect(positions[0]).toBe(dropPosition)
     })
-  })
 
-  it('should fire tile drop events', () => {
-    const positions = []
-    game.events.onTileDropped = position => {
-      positions.push(position)
-    }
-    const dropPosition = game.board.getPosition(0, 0)
-    game.dropPlayerTile(dropPosition)
+    it('should fire game over event on player drop', () => {
+      game.events.onGameOver = jest.fn()
+      fill(RedGame.Tiles.NORMAL_1, game.board.getAllPositions().length - 1)
+      game.dropPlayerTile(game.board.getPosition(8, 8))
+      expect(game.events.onGameOver).toHaveBeenCalledTimes(1)
+    })
 
-    expect(positions).toHaveLength(game.tilesToDropCount + 1)
-    expect(positions[0]).toBe(dropPosition)
-  })
-
-  it('should fire game over event on player drop', () => {
-    game.events.onGameOver = jest.fn()
-    fill(RedGame.Tiles.NORMAL_1, game.board.getAllPositions().length - 1)
-    game.dropPlayerTile(game.board.getPosition(8, 8))
-    expect(game.events.onGameOver).toHaveBeenCalledTimes(1)
-  })
-
-  it('should fire game over event on computer drop', () => {
-    game.events.onGameOver = jest.fn()
-    fill(Symbol('test-type'), game.board.getAllPositions().length - game.tilesToDropCount - 1)
-    game.dropPlayerTile(game.board.getPosition(8, 8))
-    expect(game.events.onGameOver).toHaveBeenCalledTimes(1)
+    it('should fire game over event on computer drop', () => {
+      game.events.onGameOver = jest.fn()
+      fill(Symbol('test-type'), game.board.getAllPositions().length - game.tilesToDropCount - 1)
+      game.dropPlayerTile(game.board.getPosition(8, 8))
+      expect(game.events.onGameOver).toHaveBeenCalledTimes(1)
+    })
   })
 })

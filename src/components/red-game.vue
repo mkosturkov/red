@@ -2,11 +2,11 @@
   <div class="red-game-holder">
     <div class="controls-holder">
       <button class="new-game-btn" @click="newGame">New Game</button>
-      <div class="srore-display">Score: {{ score }}</div>
+      <div class="srore-display">Score: {{ game.score }}</div>
       <div class="next-tiles-holder">
         Next tiles:
         <span
-          v-for="(tile, idx) in nextTiles"
+          v-for="(tile, idx) in game.nextTilesToDrop"
           :key="[idx, getTileStyle(tile)].join('-')"
           :class="['next-tile', getTileStyle(tile)]"
         ></span>
@@ -15,7 +15,7 @@
     </div>
     <div class="board-holder">
       <div
-        v-for="position in positions"
+        v-for="position in game.board.getAllPositions()"
         :class="['position', getTileStyle(position.value), {selected: isSelected(position)}]"
         :key="getPositionKey(position)"
         @click="handleClick(position)"
@@ -29,24 +29,17 @@
 <script>
 import RedGame from '@/game-logic/red-game'
 
-let game = new RedGame()
-
 export default {
   name: 'RedGame',
 
   data () {
-    return this.update({})
+    return {
+      game: new RedGame(),
+      selected: null
+    }
   },
 
   methods: {
-    update (target) {
-      target = target || this
-      target.score = game.score
-      target.positions = game.board.getAllPositions()
-      target.nextTiles = game.nextTilesToDrop
-      target.selected = false
-      return target
-    },
 
     getPositionKey (position) {
       return [position.x, position.y, this.getTileStyle(position.value)].join('-')
@@ -80,24 +73,22 @@ export default {
 
     handleClick (position) {
       if (this.selected) {
-        game.moveTile(this.selected, position)
-        this.update()
+        this.game.moveTile(this.selected, position)
+        this.selected = null
       } else if (position.value) {
         this.selected = position
       } else {
-        game.dropPlayerTile(position)
-        this.update()
+        this.game.dropPlayerTile(position)
+        this.selected = null
       }
     },
 
     dropTiles () {
-      game.dropTiles()
-      this.update()
+      this.game.dropTiles()
     },
 
     newGame () {
-      game = new RedGame()
-      this.update()
+      this.game = new RedGame()
     }
   }
 }

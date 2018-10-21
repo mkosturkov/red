@@ -297,4 +297,21 @@ describe('RedGame', () => {
       })
     })
   })
+
+  it('should fire lines clear event with the lines', () => {
+    let clearedLines
+    game.events.onLinesCleared = jest.fn(lines => {
+      clearedLines = lines
+    })
+
+    drawLine(horizontal, 0, game.minLineLength - 1, RedGame.Tiles.PLAYER_DROPPED)
+    game.dropPlayerTile(game.board.getPosition(4, 4))
+
+    expect(clearedLines).toHaveLength(1)
+    expect(clearedLines[0]).toHaveLength(game.minLineLength)
+    clearedLines[0].forEach((p, idx) => {
+      expect(p.x).toBe(idx)
+      expect(p.y).toBe(4)
+    })
+  })
 })

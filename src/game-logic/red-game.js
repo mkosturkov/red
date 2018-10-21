@@ -11,7 +11,8 @@ class RedGame {
     this.nextTilesToDrop = this.getTilesToDrop()
 
     this.events = {
-      onMoveMade () {}
+      onMoveMade (tile, path) {},
+      onLinesCleared (lines) {}
     }
   }
 
@@ -129,6 +130,7 @@ class RedGame {
     const linesToClear = this.getLinesForPosition(position)
     this.score = this.calculateScore(linesToClear, this.score)
     linesToClear.forEach(line => line.forEach(position => delete position.value))
+    this.events.onLinesCleared(linesToClear)
     return linesToClear.length > 0
   }
 

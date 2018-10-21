@@ -8,8 +8,15 @@ class RedGame {
     this.tilesToDropCount = 3
 
     this.score = 0
-    this.gameOver = false
     this.nextTilesToDrop = this.getTilesToDrop()
+  }
+
+  get gameOver () {
+    return this.emptyPositions.length === 0
+  }
+
+  get emptyPositions () {
+    return this.board.getAllPositions().filter(this.canDropTileOn)
   }
 
   canDropTileOn (position) {
@@ -58,16 +65,16 @@ class RedGame {
   }
 
   dropTiles () {
-    this.nextTilesToDrop.forEach(tile => {
-      const emptyPositions = this.board.getAllPositions().filter(this.canDropTileOn)
-      if (emptyPositions.length === 0) {
-        this.gameOver = true
-        return
+    this.nextTilesToDrop.every(tile => {
+      if (this.gameOver) {
+        return false
       }
+      const emptyPositions = this.emptyPositions
       const idx = random(0, emptyPositions.length - 1)
       const position = emptyPositions.splice(idx, 1)[0]
       position.value = tile
       this.scoreAndClear(position)
+      return true
     })
     this.nextTilesToDrop = this.getTilesToDrop()
   }

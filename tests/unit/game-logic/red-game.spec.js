@@ -19,6 +19,12 @@ describe('RedGame', () => {
     })
   }
 
+  const fill = (type, length) => {
+    game.board.getAllPositions().slice(0, length).forEach(p => {
+      p.value = type
+    })
+  }
+
   let game
   beforeEach(() => {
     game = new RedGame()
@@ -239,13 +245,20 @@ describe('RedGame', () => {
       expect(game.scoreAndClear).toHaveBeenCalledTimes(game.tilesToDropCount)
     })
 
-    it('should end game when tries to drop, but no more positions are available', () => {
+    it('should initialize with no game over', () => {
       expect(game.gameOver).toBe(false)
+    })
 
+    it('should end game when tries to drop, but no more positions are available', () => {
       const tileToFill = Symbol('tile-to-fill')
-      game.board.getAllPositions().forEach(p => {
-        p.value = tileToFill
-      })
+      fill(tileToFill, game.board.getAllPositions().length)
+      game.dropTiles()
+      expect(game.gameOver).toBe(true)
+    })
+
+    it('should end game when player can not make a move', () => {
+      const tileToFill = Symbol('tile-to-fill')
+      fill(tileToFill, game.board.getAllPositions().length - game.tilesToDropCount)
       game.dropTiles()
       expect(game.gameOver).toBe(true)
     })

@@ -274,4 +274,27 @@ describe('RedGame', () => {
       expect(game.gameOver).toBe(true)
     })
   })
+
+  describe('Observable events', () => {
+    it('should fire tile move event with route', () => {
+      let steps, tile
+      game.events.onMoveMade = (movedTile, madeSteps) => {
+        tile = movedTile
+        steps = madeSteps
+      }
+
+      const from = game.board.getPosition(0, 0)
+      const to = game.board.getPosition(3, 3)
+
+      game.dropPlayerTile(from)
+      game.moveTile(from, to)
+
+      expect(tile).toBe(RedGame.Tiles.PLAYER_DROPPED)
+      expect(steps.length).toBeGreaterThan(0)
+      steps.forEach(step => {
+        expect(step.x).not.toBe(undefined)
+        expect(step.y).not.toBe(undefined)
+      })
+    })
+  })
 })

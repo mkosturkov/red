@@ -9,6 +9,10 @@ class RedGame {
 
     this.score = 0
     this.nextTilesToDrop = this.getTilesToDrop()
+
+    this.events = {
+      onMoveMade () {}
+    }
   }
 
   get gameOver () {
@@ -33,12 +37,18 @@ class RedGame {
   }
 
   canMoveTile (from, to) {
+    return !!this.getPath(from, to)
+  }
+
+  getPath (from, to) {
     const visited = []
+    const path = []
     const reached = position => position === to
     const wasNotVisited = position => visited.indexOf(position) < 0
     const isNotBlocked = position => position.value === undefined
     const hasPath = position => {
       if (reached(position)) {
+        path.push(position)
         return true
       }
 
@@ -46,16 +56,19 @@ class RedGame {
       const nonBlocked = position.neighbours.filter(isNotBlocked)
       for (let i = 0; i < nonBlocked.length; i++) {
         if (wasNotVisited(nonBlocked[i]) && hasPath(nonBlocked[i])) {
+          path.push(position)
           return true
         }
       }
       return false
     }
-    return !reached(from, to) && hasPath(from)
+    return !reached(from, to) && hasPath(from) && path.reverse()
   }
 
   moveTile (from, to) {
-    if (this.canMoveTile(from, to)) {
+    const path = this.getPath(from, to)
+    if (path) {
+      this.events.onMoveMade(from.value, path)
       to.value = from.value
       delete from.value
       if (!this.scoreAndClear(to)) {

@@ -103,8 +103,13 @@ class RedGame {
   }
 
   calculateScore (linesToScore, previousScore) {
-    const tileScore = tile => tile === RedGame.Tiles.PLAYER_DROPPED ? 2 : 1
-    return linesToScore.reduce((acc, line) => tileScore(line[0].value) * line.length + acc, previousScore)
+    const tileScore = tile => tile === RedGame.Tiles.PLAYER_DROPPED ? 4 : 2
+    return linesToScore.reduce((acc, line) => {
+      const ts = tileScore(line[0].value)
+      return acc +
+        ts * line.length +
+        ts * Math.max(0, line.length - this.minLineLength)
+    }, previousScore)
   }
 
   scoreAndClear (position) {

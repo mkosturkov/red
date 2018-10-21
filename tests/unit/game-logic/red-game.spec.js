@@ -138,22 +138,33 @@ describe('RedGame', () => {
   })
 
   describe('Calculating score', () => {
+    const makeLine = (tile, length) => {
+      tile = tile || game.getDropableTiles()[0]
+      length = length || game.minLineLength
+      return range(length).fill({ value: tile })
+    }
+
     it('should know points for values', () => {
       RedGame.getDropableTiles().forEach(tile => {
-        expect(game.calculateScore([[{ value: tile }]], 0)).toBe(1)
+        expect(game.calculateScore([[{ value: tile }]], 0)).toBe(2)
       })
-      expect(game.calculateScore([[{ value: RedGame.Tiles.PLAYER_DROPPED }]], 0)).toBe(2)
+      expect(game.calculateScore([[{ value: RedGame.Tiles.PLAYER_DROPPED }]], 0)).toBe(4)
     })
 
     it('should sum score in lines', () => {
       const lines = Object.values(RedGame.getDropableTiles())
-        .map(tile => range(3).fill({ value: tile }))
-        .concat([range(3).fill({ value: RedGame.Tiles.PLAYER_DROPPED })])
-      expect(game.calculateScore(lines, 0)).toBe(15)
+        .map(tile => makeLine(tile))
+        .concat([makeLine(RedGame.Tiles.PLAYER_DROPPED)])
+      expect(game.calculateScore(lines, 0)).toBe(50)
     })
 
     it('should add to previous score', () => {
-      expect(game.calculateScore([[{ value: RedGame.Tiles.PLAYER_DROPPED }]], 1)).toBe(3)
+      expect(game.calculateScore([[{ value: RedGame.Tiles.PLAYER_DROPPED }]], 1)).toBe(5)
+    })
+
+    it('should add the points above the minimum twice', () => {
+      const lines = [makeLine(RedGame.Tiles.NORMAL_1, game.minLineLength + 3)]
+      expect(game.calculateScore(lines, 0)).toBe(22)
     })
   })
 
@@ -223,7 +234,7 @@ describe('RedGame', () => {
       drawLine(horizontal, 0, game.minLineLength - 1)
       game.dropPlayerTile(game.board.getPosition(4, 4))
       expect(getFilledPositions()).toHaveLength(0)
-      expect(game.score).toBe(10)
+      expect(game.score).toBe(20)
     })
 
     it('should drop tiles after tile move and not add score', () => {
@@ -236,7 +247,7 @@ describe('RedGame', () => {
       drawLine(horizontal, 0, game.minLineLength - 1, RedGame.Tiles.NORMAL_1)
       game.moveTile(...getFromTo())
       expect(getFilledPositions()).toHaveLength(0)
-      expect(game.score).toBe(5)
+      expect(game.score).toBe(10)
     })
 
     it('should score and clear for each of the dropped tiles', () => {

@@ -12,7 +12,8 @@ class RedGame {
 
     this.events = {
       onMoveMade (tile, path) {},
-      onLinesCleared (lines) {}
+      onLinesCleared (lines) {},
+      onTileDropped (position) {}
     }
   }
 
@@ -31,6 +32,7 @@ class RedGame {
   dropPlayerTile (position) {
     if (this.canDropTileOn(position)) {
       position.value = RedGame.Tiles.PLAYER_DROPPED
+      this.events.onTileDropped(position)
       if (!this.scoreAndClear(position)) {
         this.dropTiles()
       }
@@ -87,6 +89,7 @@ class RedGame {
       const idx = random(0, emptyPositions.length - 1)
       const position = emptyPositions.splice(idx, 1)[0]
       position.value = tile
+      this.events.onTileDropped(position)
       this.scoreAndClear(position)
       return true
     })

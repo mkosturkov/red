@@ -314,4 +314,16 @@ describe('RedGame', () => {
       expect(p.y).toBe(4)
     })
   })
+
+  it('should fire tile drop events', () => {
+    const positions = []
+    game.events.onTileDropped = position => {
+      positions.push(position)
+    }
+    const dropPosition = game.board.getPosition(0, 0)
+    game.dropPlayerTile(dropPosition)
+
+    expect(positions).toHaveLength(game.tilesToDropCount + 1)
+    expect(positions[0]).toBe(dropPosition)
+  })
 })

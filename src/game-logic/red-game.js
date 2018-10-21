@@ -8,6 +8,7 @@ class RedGame {
     this.tilesToDropCount = 3
 
     this.score = 0
+    this.gameOver = false
     this.nextTilesToDrop = this.getTilesToDrop()
   }
 
@@ -57,8 +58,12 @@ class RedGame {
   }
 
   dropTiles () {
-    const emptyPositions = this.board.getAllPositions().filter(this.canDropTileOn)
     this.nextTilesToDrop.forEach(tile => {
+      const emptyPositions = this.board.getAllPositions().filter(this.canDropTileOn)
+      if (emptyPositions.length === 0) {
+        this.gameOver = true
+        return
+      }
       const idx = random(0, emptyPositions.length - 1)
       const position = emptyPositions.splice(idx, 1)[0]
       position.value = tile

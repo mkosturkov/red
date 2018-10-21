@@ -238,5 +238,16 @@ describe('RedGame', () => {
       game.dropTiles()
       expect(game.scoreAndClear).toHaveBeenCalledTimes(game.tilesToDropCount)
     })
+
+    it('should end game when tries to drop, but no more positions are available', () => {
+      expect(game.gameOver).toBe(false)
+
+      const tileToFill = Symbol('tile-to-fill')
+      game.board.getAllPositions().forEach(p => {
+        p.value = tileToFill
+      })
+      game.dropTiles()
+      expect(game.gameOver).toBe(true)
+    })
   })
 })

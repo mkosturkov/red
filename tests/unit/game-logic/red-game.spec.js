@@ -326,4 +326,18 @@ describe('RedGame', () => {
     expect(positions).toHaveLength(game.tilesToDropCount + 1)
     expect(positions[0]).toBe(dropPosition)
   })
+
+  it('should fire game over event on player drop', () => {
+    game.events.onGameOver = jest.fn()
+    fill(RedGame.Tiles.NORMAL_1, game.board.getAllPositions().length - 1)
+    game.dropPlayerTile(game.board.getPosition(8, 8))
+    expect(game.events.onGameOver).toHaveBeenCalledTimes(1)
+  })
+
+  it('should fire game over event on computer drop', () => {
+    game.events.onGameOver = jest.fn()
+    fill(Symbol('test-type'), game.board.getAllPositions().length - game.tilesToDropCount - 1)
+    game.dropPlayerTile(game.board.getPosition(8, 8))
+    expect(game.events.onGameOver).toHaveBeenCalledTimes(1)
+  })
 })

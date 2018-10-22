@@ -136,6 +136,36 @@ export default {
     }
   }
 
+  @mixin visible-tile($class, $color) {
+    &.#{$class}::before {
+      visibility: visible;
+      background: $color;
+    }
+  }
+
+  @mixin tile() {
+    &::before {
+      $size: 70%;
+      position: relative;
+      top: (100% - $size) / 2;
+      margin: auto;
+
+      display: block;
+      content: " ";
+      width: $size;
+      height: $size;
+      border-radius: $size;
+
+      box-shadow: 1px 1px 5px 1px rgba(0,0,0,0.5);
+      visibility: hidden;
+    }
+
+    $types: (red, blue, green, yellow, purple, navy, orange);
+    @each $color in $types {
+      @include visible-tile($color, $color)
+    }
+  }
+
   .position {
     width: calc(100% / 9);
     height: calc(100% / 9);
@@ -145,35 +175,11 @@ export default {
     &.selected {
       opacity: 0.5;
     }
+
+    @include tile();
   }
 
   .position, .next-tile {
-    &.red {
-      background: red;
-    }
 
-    &.blue {
-      background: blue;
-    }
-
-    &.green {
-      background: green;
-    }
-
-    &.yellow {
-      background: yellow;
-    }
-
-    &.purple {
-      background: purple;
-    }
-
-    &.navy {
-      background: navy;
-    }
-
-    &.orange {
-      background: orange;
-    }
   }
 </style>

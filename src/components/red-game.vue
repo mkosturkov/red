@@ -22,6 +22,7 @@
         v-for="position in game.board.getAllPositions()"
         :position="position"
         :selectedPosition="selected"
+        :game="game"
         :key="getPositionKey(position)"
         @click="handleClick(position)"
         class="position"

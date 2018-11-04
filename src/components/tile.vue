@@ -1,5 +1,5 @@
 <template>
-  <div @click="$emit('click')" :class="['tile', tileClass]"></div>
+  <div :class="['tile', tileClass]"></div>
 </template>
 
 <script>
@@ -52,6 +52,11 @@
       visibility: visible;
       background: $color;
     }
+  }
+
+  .tile {
+    width: 100%;
+    height: 100%;
   }
 
   .tile::before {

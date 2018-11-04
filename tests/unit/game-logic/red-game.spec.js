@@ -145,14 +145,18 @@ describe('RedGame', () => {
     }
 
     it('should know points for values', () => {
-      RedGame.getDropableTiles().forEach(tile => {
-        expect(game.calculateScore([[{ value: tile }]], 0)).toBe(2)
+      Object.values(RedGame.Tiles).forEach(tile => {
+        if (tile === RedGame.Tiles.PLAYER_DROPPED) {
+          expect(game.calculateScore([[{ value: tile }]], 0)).toBe(4)
+        } else {
+          expect(game.calculateScore([[{ value: tile }]], 0)).toBe(2)
+        }
       })
-      expect(game.calculateScore([[{ value: RedGame.Tiles.PLAYER_DROPPED }]], 0)).toBe(4)
     })
 
     it('should sum score in lines', () => {
       const lines = Object.values(RedGame.getDropableTiles())
+        .filter(tile => tile !== RedGame.Tiles.PLAYER_DROPPED)
         .map(tile => makeLine(tile))
         .concat([makeLine(RedGame.Tiles.PLAYER_DROPPED)])
       expect(game.calculateScore(lines, 0)).toBe(80)

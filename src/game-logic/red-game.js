@@ -160,9 +160,7 @@ RedGame.Tiles = {
 }
 
 RedGame.getDropableTiles = () => {
-  const dropable = Object.assign({}, RedGame.Tiles)
-  delete dropable.PLAYER_DROPPED
-  return Object.values(dropable)
+  return Object.values(RedGame.Tiles)
 }
 
 export default RedGame

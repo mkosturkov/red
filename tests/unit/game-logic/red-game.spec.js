@@ -39,7 +39,7 @@ describe('RedGame', () => {
     }
     it('should have prepared tiles to drop', shouldHavePreparedTilesToDrop)
 
-    it('should report correctly if position is available for drop', () => {
+    it('should report correctly if position.vue is available for drop', () => {
       const position = game.board.getPosition(5, 5)
       expect(game.canDropTileOn(position)).toBe(true)
 
@@ -47,7 +47,7 @@ describe('RedGame', () => {
       expect(game.canDropTileOn(position)).toBe(false)
     })
 
-    it('should drop player tile only if position is available', () => {
+    it('should drop player tile only if position.vue is available', () => {
       const position = game.board.getPosition(5, 5)
       const takenPosition = game.board.getPosition(6, 6)
       takenPosition.value = RedGame.Tiles.NORMAL_1

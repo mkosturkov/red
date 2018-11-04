@@ -18,14 +18,15 @@
       </div>
     </div>
     <div class="board-holder">
-      <Tile
+      <Position
         v-for="position in game.board.getAllPositions()"
-        :value="position.value"
-        :class="['position', {selected: isSelected(position)}]"
+        :position="position"
+        :selectedPosition="selected"
         :key="getPositionKey(position)"
         @click="handleClick(position)"
+        class="position"
       >
-      </Tile>
+      </Position>
     </div>
 
   </div>
@@ -34,10 +35,11 @@
 <script>
 import RedGame from '@/game-logic/red-game'
 import Tile from './tile.vue'
+import Position from './position.vue'
 
 export default {
   name: 'RedGame',
-  components: { Tile },
+  components: { Tile, Position },
 
   data () {
     return {
@@ -54,10 +56,6 @@ export default {
         position.y,
         position.value ? position.value.toString() : ''
       ].join('-')
-    },
-
-    isSelected (position) {
-      return this.selected === position
     },
 
     handleClick (position) {
@@ -145,10 +143,6 @@ export default {
     height: calc(100% / #{$positions-count});
     border-right: 1px solid black;
     border-bottom: 1px solid black;
-
-    &.selected {
-      opacity: 0.5;
-    }
   }
 
   .next-tile {

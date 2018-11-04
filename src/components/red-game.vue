@@ -8,22 +8,24 @@
       <div class="row">
         <div class="srore-display">Score: {{ game.score }}</div>
         <div class="next-tiles-holder">
-          <div
+          <Tile
             v-for="(tile, idx) in game.nextTilesToDrop"
-            :key="[idx, getTileStyle(tile)].join('-')"
-            :class="['next-tile', getTileStyle(tile)]"
-          ></div>
+            :value="tile"
+            :key="[idx, tile.toString()].join('-')"
+            :class="['next-tile']"
+          ></Tile>
         </div>
       </div>
     </div>
     <div class="board-holder">
-      <div
+      <Tile
         v-for="position in game.board.getAllPositions()"
-        :class="['position', getTileStyle(position.value), {selected: isSelected(position)}]"
+        :value="position.value"
+        :class="['position', {selected: isSelected(position)}]"
         :key="getPositionKey(position)"
         @click="handleClick(position)"
       >
-      </div>
+      </Tile>
     </div>
 
   </div>
@@ -31,9 +33,11 @@
 
 <script>
 import RedGame from '@/game-logic/red-game'
+import Tile from './tile.vue'
 
 export default {
   name: 'RedGame',
+  components: { Tile },
 
   data () {
     return {
@@ -45,41 +49,11 @@ export default {
   methods: {
 
     getPositionKey (position) {
-      return [position.x, position.y, this.getTileStyle(position.value)].join('-')
-    },
-
-    getTileStyle (tile) {
-      let style = false
-      switch (tile) {
-        case RedGame.Tiles.NORMAL_1:
-          style = 'blue'
-          break
-
-        case RedGame.Tiles.NORMAL_2:
-          style = 'green'
-          break
-
-        case RedGame.Tiles.NORMAL_3:
-          style = 'yellow'
-          break
-
-        case RedGame.Tiles.NORMAL_4:
-          style = 'purple'
-          break
-
-        case RedGame.Tiles.NORMAL_5:
-          style = 'navy'
-          break
-
-        case RedGame.Tiles.NORMAL_6:
-          style = 'orange'
-          break
-
-        case RedGame.Tiles.PLAYER_DROPPED:
-          style = 'red'
-          break
-      }
-      return style
+      return [
+        position.x,
+        position.y,
+        position.value ? position.value.toString() : ''
+      ].join('-')
     },
 
     isSelected (position) {
@@ -114,36 +88,6 @@ export default {
   $positions-count: 9;
   $board-size: 100vw;
   $board-max-size: 800px;
-
-  @mixin visible-tile($class, $color) {
-    &.#{$class}::before {
-      visibility: visible;
-      background: $color;
-    }
-  }
-
-  @mixin tile() {
-    &::before {
-      $size: 70%;
-      position: relative;
-      top: (100% - $size) / 2;
-      margin: auto;
-
-      display: block;
-      content: " ";
-      width: $size;
-      height: $size;
-      border-radius: $size;
-
-      box-shadow: 1px 1px 5px 1px rgba(0,0,0,0.5);
-      visibility: hidden;
-    }
-
-    $types: (red, blue, green, yellow, purple, navy, orange);
-    @each $color in $types {
-      @include visible-tile($color, $color)
-    }
-  }
 
   .controls-holder {
 
@@ -205,13 +149,10 @@ export default {
     &.selected {
       opacity: 0.5;
     }
-
-    @include tile();
   }
 
   .next-tile {
     position: relative;
     height: 100%;
-    @include tile()
   }
 </style>
